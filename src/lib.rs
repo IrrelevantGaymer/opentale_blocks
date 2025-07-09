@@ -1,68 +1,80 @@
-use proc_macro::TokenStream;
-use syn::parse_macro_input;
-use quote::{quote, ToTokens};
+#![feature(const_trait_impl)]
 
-use crate::{block_table::{Block, BlockList}};
+pub mod block_types;
 
-mod block_table;
+#[const_trait]
+pub trait Buildable {
+    fn get_size() -> usize;
+    fn with_index(self, idx: usize) -> Self;
+}
 
-#[proc_macro]
-pub fn blocks(input: TokenStream) -> TokenStream {
-    let BlockList { blocks } = parse_macro_input!(input as BlockList);
+#[macro_export]
+macro_rules! table {
+    (
+        $slice:path, 
+        static $table:ident = {
+            $(let $block_name:ident : $block_type:ty = $block_expr:expr ;)*
+        }
+    ) => {
+        $crate::assert_items_define!(
+            $slice, 
+            $($block_name : $block_type),*
+        );
+        $crate::items_define!(
+            1, 
+            $($block_name : $block_type = $block_expr),*
+        );
+        $crate::table_define!(
+            $table, $slice, 
+            $($block_name),*
+        );
+    };
+}
 
-    let mut block_names = Vec::new(); 
+#[macro_export]
+macro_rules! assert_items_define {
+    (
+        $slice:path, 
+        $first_name:ident : $first_type:ty
+        $(, $rest_name:ident : $rest_type:ty)*
+    ) => {
+        static_assertions::assert_impl_all!($first_type: $crate::Buildable, $slice);
+        $crate::assert_items_define!(
+            $slice, 
+            $($rest_name : $rest_type),*
+        );
+    };
+    ($slice:path, ) => {
 
-    let mut next_index = 1usize;
-
-    let mut consts = quote! {};
-    let mut assertions = quote! {};
-
-    for block in blocks {
-        let Block { name, ty, expr } = block;
-
-        block_names.push(name.clone());
-
-        assertions.extend(quote! {
-            static_assertions::assert_impl_all!(#ty: BlockType, BlockTypeBuildable);
-        });
-
-        let expr_with_index = quote! {
-            (#expr).with_index(#next_index)
-        };
-
-        consts.extend(quote! {
-            pub const #name: #ty = #expr_with_index;
-        });
-
-        let type_name = ty.to_token_stream().to_string();
-        let type_size = match type_name.as_str() {
-            "Basic" => 1,
-            "Full" => 6,
-            "Pillar" => 3,
-            invalid_type => {
-                return syn::Error::new_spanned(
-                    &ty, 
-                    format!("`{invalid_type}` must be a valid block.  Try Full, Basic, or Pillar.")
-                ).to_compile_error().into();
-            }
-        };
-
-        next_index += type_size;
     }
+}
 
-    let slice = quote! {
-        pub static BLOCKS: &[&dyn BlockType] = &[
-            #(&#block_names),*
+#[macro_export]
+macro_rules! items_define {
+    (
+        $idx:expr, 
+        $first_name:ident : $first_type:path = $first_expr:expr 
+        $(, $rest_name:ident : $rest_type:path = $rest_expr:expr)*
+    ) => {
+        static $first_name: $first_type = <$first_type as $crate::Buildable>::with_index($first_expr, $idx);
+        $crate::items_define!(
+            $idx + <$first_type as $crate::Buildable>::get_size(), 
+            $($rest_name : $rest_type = $rest_expr),*
+        );
+    };
+    ($idx:expr, ) => {
+        
+    };
+}
+
+#[macro_export]
+macro_rules! table_define {
+    (
+        $table:ident, $slice:path, 
+        $($block_name:ident),*
+    ) => {
+        pub static $table : &'static [&'static (dyn $slice)] = &[
+            $(& $block_name),*
         ];
-    };
-
-    let expanded = quote! {
-        #assertions
-
-        #consts
-
-        #slice
-    };
-
-    expanded.into()
+    }
 }
