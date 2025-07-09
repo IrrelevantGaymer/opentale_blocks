@@ -1,5 +1,14 @@
-A proc macro that lets users generate different types of blocks containing a name and an index.  It also generates a static slice of all the defined blocks called BLOCKS.  The slice is of type `&'static [&'static dyn BlockType]`.
+A declarative macro that lets users generate different types of items containing a name and an index that would reference a table of data.  It also generates a static slice of type `&'static [&'static dyn SliceTrait]` of all the defined items.
 
-A struct must implement a trait called BlockTypeBuildable and BlockType (that are both accessible in the file) to be used in this macro.
+Items must have a type that implements the trait Buildable.
 
-This is a very unhygienic macro, and I might be able to refactor this to a declarative macro instead to make it more hygienic.
+Here's an Example assuming Foo and Bar implement Buildsble and SliceTrait:
+
+```
+table!(SliceTrait, static SLICE_NAME = {
+    A: Foo = ...;
+    B: Bar = ...;
+});
+```
+
+this would produce constants A and B, and produce a static slice called "SLICE_NAME" with elements &A and &B.
