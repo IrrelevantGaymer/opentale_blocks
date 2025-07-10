@@ -2,18 +2,18 @@
 
 use opentale_blocks::{
     block_types::{full, Basic, Block, BlockType, Full, Pillar}, 
-    table
+    table, Indexable
 };
 
-table!(BlockType, static BLOCKS = {
-    let DIRT: Basic = Block::new_basic("dirt_block")
+table!(BlockType<BlockIds>, enum BlockIds, static BLOCKS = {
+    let DIRT: Basic<BlockIds> = Block::new_basic("dirt_block")
         .with_texture("dirt.gif");
-    let LOG: Pillar = Block::new_pillar("log")
+    let LOG: Pillar<BlockIds> = Block::new_pillar("log")
         .with_texture("log.gif");
-    let IRON_ORE: Basic = Block::new_basic("iron_ore")
+    let IRON_ORE: Basic<BlockIds> = Block::new_basic("iron_ore")
         .with_texture("iron_ore.gif")
         .with_model("ore.bbno$");
-    let FURNACE: Full = Block::new_full("furnace")
+    let FURNACE: Full<BlockIds> = Block::new_full("furnace")
         .with_textures(full::Paths {
             up: Some("furnace_top.gif"),
             north: Some("furnace_north.gif"),
@@ -30,13 +30,13 @@ table!(BlockType, static BLOCKS = {
             south: Some("furnace_south.bbno$"),
             down: Some("furnace_bottom.bbno$f")
         });
-    let IRON_BLOCK: Basic = Block::new_basic("iron_block")
+    let IRON_BLOCK: Basic<BlockIds> = Block::new_basic("iron_block")
         .with_texture("iron_block.gif")
         .with_model("iron_block.bbno$");
 });
 
 pub fn main() {
     for block in BLOCKS {
-        println!("{} has index {}", block.name(), block.index());
+        println!("{} has index {}", block.name(), block.index().index());
     }
 }

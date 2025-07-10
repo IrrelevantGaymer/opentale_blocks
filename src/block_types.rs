@@ -1,48 +1,52 @@
-use crate::Buildable;
+use std::marker::PhantomData;
 
-pub struct Block;
+use crate::{Buildable, Indexable};
 
-impl Block {
-    pub const fn new_basic(name: &'static str) -> Basic {
-        Basic { name, texture: None, model: None, index: 0usize }
+pub struct Block<T: Indexable> {
+    _phantom: PhantomData<T>
+}
+
+impl<T: const Indexable> Block<T> {
+    pub const fn new_basic(name: &'static str) -> Basic<T> {
+        Basic { name, texture: None, model: None, index: T::default() }
     }
 
-    pub const fn new_full(name: &'static str) -> Full {
+    pub const fn new_full(name: &'static str) -> Full<T> {
         Full { 
             name,
             texture: full::Texture::Texture(None),
             models: full::Paths::default(),
-            index: 0
+            index: T::default()
         }
     }
 
-    pub const fn new_pillar(name: &'static str) -> Pillar {
+    pub const fn new_pillar(name: &'static str) -> Pillar<T> {
         Pillar {
             name,
             texture: pillar::Texture::Texture(None),
             models: pillar::Paths::default(),
-            index: 0
+            index: T::default()
         }
     }
 }
 
-pub trait BlockType: Send + Sync {
+pub trait BlockType<T: const Indexable>: Send + Sync {
     fn name(&self) -> &'static str;
-    fn index(&self) -> usize;
+    fn index(&self) -> T;
 }
 
 pub enum Face {
     Up, North, West, East, South, Down
 }
 
-pub struct Basic {
+pub struct Basic<T: const Indexable> {
     name: &'static str,
     texture: Option<&'static str>,
     model: Option<&'static str>,
-    index: usize
+    index: T
 }
 
-impl Basic {
+impl<T: const Indexable> Basic<T> {
     pub const fn with_texture(mut self, texture: &'static str) -> Self {
         self.texture = Some(texture);
         self
@@ -54,32 +58,32 @@ impl Basic {
     } 
 }
 
-impl const Buildable for Basic {
+impl<T: const Indexable> const Buildable<T> for Basic<T> {
     fn get_size() -> usize {1usize}
-    fn with_index(mut self, idx: usize) -> Self {
+    fn with_index(mut self, idx: T) -> Self {
         self.index = idx;
         self
     }
 }
 
-impl BlockType for Basic {
+impl<T: const Indexable> BlockType<T> for Basic<T> {
     fn name(&self) -> &'static str {
         self.name
     }
 
-    fn index(&self) -> usize {
+    fn index(&self) -> T {
         self.index
     }
 }
 
-pub struct Full {
+pub struct Full<T: const Indexable> {
     name: &'static str,
     texture: full::Texture,
     models: full::Paths,
-    index: usize
+    index: T
 }
 
-impl Full {
+impl<T: const Indexable> Full<T> {
     pub const fn with_texture(mut self, texture: &'static str) -> Self {
         self.texture = full::Texture::Texture(Some(texture));
         self
@@ -96,20 +100,20 @@ impl Full {
     } 
 }
 
-impl const Buildable for Full {
+impl<T: const Indexable> const Buildable<T> for Full<T> {
     fn get_size() -> usize {6usize}
-    fn with_index(mut self, idx: usize) -> Self {
+    fn with_index(mut self, idx: T) -> Self {
         self.index = idx;
         self
     }
 }
 
-impl BlockType for Full {
+impl<T: const Indexable> BlockType<T> for Full<T> {
     fn name(&self) -> &'static str {
         self.name
     }
 
-    fn index(&self) -> usize {
+    fn index(&self) -> T {
         self.index
     }
 }
@@ -143,14 +147,14 @@ pub mod full {
     }
 }
 
-pub struct Pillar {
+pub struct Pillar<T: const Indexable> {
     name: &'static str,
     texture: pillar::Texture,
     models: pillar::Paths,
-    index: usize
+    index: T
 }
 
-impl Pillar {
+impl<T: const Indexable> Pillar<T> {
     pub const fn with_texture(mut self, texture: &'static str) -> Self {
         assert!(
             self.models.up.is_none() &&
@@ -177,20 +181,20 @@ impl Pillar {
     } 
 }
 
-impl const Buildable for Pillar {
+impl<T: const Indexable> const Buildable<T> for Pillar<T> {
     fn get_size() -> usize {3usize}
-    fn with_index(mut self, idx: usize) -> Self {
+    fn with_index(mut self, idx: T) -> Self {
         self.index = idx;
         self
     }
 }
 
-impl BlockType for Pillar {
+impl<T: const Indexable> BlockType<T> for Pillar<T> {
     fn name(&self) -> &'static str {
         self.name
     }
 
-    fn index(&self) -> usize {
+    fn index(&self) -> T {
         self.index
     }
 }
