@@ -20,7 +20,7 @@ macro_rules! table {
         $slice:path, 
         enum $enum_name:ident,
         static $table:ident = {
-            $(let $block_name:ident : $block_type:ty = $block_expr:expr ;)*
+            $(let $block_name:ident : $block_type:ident = $block_expr:expr ;)*
         }
     ) => {
         $crate::assert_items_define!(
@@ -46,10 +46,10 @@ macro_rules! table {
 macro_rules! assert_items_define {
     (
         $slice:path, $enum_name:ident,
-        $first_name:ident : $first_type:ty
-        $(, $rest_name:ident : $rest_type:ty)*
+        $first_name:ident : $first_type:ident
+        $(, $rest_name:ident : $rest_type:ident)*
     ) => {
-        static_assertions::assert_impl_all!($first_type: $crate::Buildable<$enum_name>, $slice);
+        static_assertions::assert_impl_all!($crate::insert_indexable!($enum_name, $first_type): $crate::Buildable<$enum_name>, $slice);
         $crate::assert_items_define!(
             $slice, $enum_name,
             $($rest_name : $rest_type),*
@@ -64,10 +64,15 @@ macro_rules! assert_items_define {
 macro_rules! items_define {
     (
         $enum_name:ident,
-        $first_name:ident : $first_type:path = $first_expr:expr 
-        $(, $rest_name:ident : $rest_type:path = $rest_expr:expr)*
+        $first_name:ident : $first_type:ident = $first_expr:expr 
+        $(, $rest_name:ident : $rest_type:ident = $rest_expr:expr)*
     ) => {
-        static $first_name: $first_type = <$first_type as $crate::Buildable<$enum_name>>::with_index($first_expr, $enum_name::$first_name);
+        #[allow(non_upper_case_globals)]
+        static $first_name: $crate::insert_indexable!($enum_name, $first_type) = 
+            <$crate::insert_indexable!($enum_name, $first_type) as $crate::Buildable<$enum_name>>::with_index(
+                $first_expr, 
+                $enum_name::$first_name
+            );
         $crate::items_define!(
             $enum_name,
             $($rest_name : $rest_type = $rest_expr),*
@@ -79,10 +84,20 @@ macro_rules! items_define {
 }
 
 #[macro_export]
+macro_rules! insert_indexable {
+    ($enum_name:ident, $ty:ident) => {
+        $ty<$enum_name>
+    };
+    ($enum_name:ident, $ty:ident < $($args:ty),+ $(,)? >) => {
+        $ty<$enum_name, $($args),*>
+    };
+}
+
+#[macro_export]
 macro_rules! items_enum {
     (
         $enum_name:ident,
-        $($block_name:ident : $block_type:ty),*
+        $($block_name:ident : $block_type:ident),*
     ) => {
         #[derive(Clone, Copy)]
         pub enum $enum_name {
@@ -95,7 +110,7 @@ macro_rules! items_enum {
                 $enum_name::AIR
             }
             
-            fn index(&self) -> usize {
+            fn value(&self) -> usize {
                 $crate::items_enum_inner!(1; self, $enum_name, $($block_name : $block_type),*)
             }
         }
@@ -106,14 +121,14 @@ macro_rules! items_enum {
 macro_rules! items_enum_inner {
     (
         $idx:expr; $self:ident, $enum_name:ident,
-        $first_name:ident : $first_type:ty
-        $(, $rest_name:ident : $rest_type:ty)*
+        $first_name:ident : $first_type:ident
+        $(, $rest_name:ident : $rest_type:ident)*
     ) => {
         if matches!($self, <$enum_name>::$first_name) {
             $idx
         } else {
             $crate::items_enum_inner!(
-                $idx + <$first_type as $crate::Buildable<$enum_name>>::get_size();
+                $idx + <$crate::insert_indexable!($enum_name, $first_type) as $crate::Buildable<$enum_name>>::get_size();
                 $self,
                 $enum_name,
                 $($rest_name : $rest_type),*

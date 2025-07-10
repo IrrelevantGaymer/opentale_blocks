@@ -6,14 +6,14 @@ use opentale_blocks::{
 };
 
 table!(BlockType<BlockIds>, enum BlockIds, static BLOCKS = {
-    let DIRT: Basic<BlockIds> = Block::new_basic("dirt_block")
+    let Dirt: Basic = Block::new_basic("dirt_block")
         .with_texture("dirt.gif");
-    let LOG: Pillar<BlockIds> = Block::new_pillar("log")
+    let Log: Pillar = Block::new_pillar("log")
         .with_texture("log.gif");
-    let IRON_ORE: Basic<BlockIds> = Block::new_basic("iron_ore")
+    let IronOre: Basic = Block::new_basic("iron_ore")
         .with_texture("iron_ore.gif")
         .with_model("ore.bbno$");
-    let FURNACE: Full<BlockIds> = Block::new_full("furnace")
+    let Furnace: Full = Block::new_full("furnace")
         .with_textures(full::Paths {
             up: Some("furnace_top.gif"),
             north: Some("furnace_north.gif"),
@@ -30,7 +30,7 @@ table!(BlockType<BlockIds>, enum BlockIds, static BLOCKS = {
             south: Some("furnace_south.bbno$"),
             down: Some("furnace_bottom.bbno$f")
         });
-    let IRON_BLOCK: Basic<BlockIds> = Block::new_basic("iron_block")
+    let IronBlock: Basic = Block::new_basic("iron_block")
         .with_texture("iron_block.gif")
         .with_model("iron_block.bbno$");
 });
