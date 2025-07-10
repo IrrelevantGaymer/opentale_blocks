@@ -1,8 +1,12 @@
 #![feature(const_trait_impl)]
 
 use opentale_blocks::{
-    block_types::{full, Basic, Block, BlockType, Full, Pillar}, 
-    table, Indexable
+    blocks::{
+        block::Block, 
+        block_types::{
+            basic::Basic, full::{self, Full}, pillar::{self, Pillar}, reflectable::Reflectable, rotateable::{RotDir, Rotateable}, BlockType
+        }
+    }, table, with_full_paths, with_pillar_paths
 };
 
 table!(BlockType<BlockIds>, enum BlockIds, static BLOCKS = {
