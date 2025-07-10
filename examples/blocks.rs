@@ -37,6 +37,6 @@ table!(BlockType<BlockIds>, enum BlockIds, static BLOCKS = {
 
 pub fn main() {
     for block in BLOCKS {
-        println!("{} has index {}", block.name(), block.index().index());
+        println!("{} has index {}", block.name(), block.index().value());
     }
 }

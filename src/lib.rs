@@ -10,7 +10,7 @@ pub trait Buildable<T: Indexable> {
 
 #[const_trait]
 pub trait Indexable: Clone + Copy + Send + Sync {
-    fn index(&self) -> usize;
+    fn value(&self) -> usize;
     fn default() -> Self;
 }
 
