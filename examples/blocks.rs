@@ -4,7 +4,7 @@ use opentale_blocks::{
     blocks::{
         block::Block, 
         block_types::{
-            basic::Basic, full::{self, Full}, pillar::{self, Pillar}, reflectable::Reflectable, rotateable::{RotDir, Rotateable}, BlockType
+            basic::Basic, custom::Custom, full::{self, Full}, pillar::{self, Pillar}, reflectable::Reflectable, rotateable::{RotDir, Rotateable}, BlockType
         }
     }, table, with_full_paths, with_pillar_paths
 };
@@ -52,6 +52,12 @@ table!(BlockType, static BLOCKS = {
                 down: "slab_bottom.bbno$",
             })
     );
+    let StonePile: Custom = Block::new_custom("stone_pile")
+        .with_texture("stone_pile.gif")
+        .with_model("pile.bbno$");
+    let SnowPile: Custom = Block::new_custom("stone_pile")
+        .with_texture("snow_pile.gif")
+        .with_model("pile.bbno$");
 });
 
 pub fn main() {
