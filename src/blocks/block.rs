@@ -1,4 +1,4 @@
-use crate::{blocks::block_types::{basic::Basic, full::Full, pillar::Pillar, reflectable::Reflectable, rotateable::{RotDir, Rotateable}, BlockType}, Buildable};
+use crate::{blocks::block_types::{basic::Basic, custom::Custom, full::Full, pillar::Pillar, reflectable::Reflectable, rotateable::{RotDir, Rotateable}, BlockType}, Buildable};
 
 pub struct Block;
 
@@ -11,6 +11,17 @@ impl Block {
     /// pivotal data that can only be safely set inside the `table` macro.
     pub const fn new_basic(name: &'static str) -> Basic {
         Basic::new_with_name(name)
+    }
+
+    /// Builds a new Custom Block with default values and a specified name.
+    /// 
+    /// A Custom Block is a block with a custom model that is not culled by
+    /// nor culls other faces.
+    /// 
+    /// Should only ever be used inside the `table` macro.  Blocks have
+    /// pivotal data that can only be safely set inside the `table` macro.
+    pub const fn new_custom(name: &'static str) -> Custom {
+        Custom::new_with_name(name)
     }
 
     /// Builds a new Full Block with default values and a specified name.

@@ -1,4 +1,5 @@
 pub mod basic;
+pub mod custom;
 pub mod full;
 pub mod pillar;
 pub mod rotateable;
