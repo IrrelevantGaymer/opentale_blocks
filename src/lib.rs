@@ -22,6 +22,7 @@ pub trait Buildable {
 macro_rules! table {
     (
         $slice:path, 
+        enum $enum:ident,
         static $table:ident = {
             $(let $block_name:ident : $block_type:ty = $block_expr:expr ;)*
         }
@@ -34,8 +35,14 @@ macro_rules! table {
             1, 1,
             $($block_name : $block_type = $block_expr),*
         );
+
         $crate::table_define!(
             $table, $slice, 
+            $($block_name),*
+        );
+
+        $crate::enum_define!(
+            $enum,
             $($block_name),*
         );
     };
@@ -89,11 +96,20 @@ macro_rules! items_define {
 #[macro_export]
 macro_rules! table_define {
     (
-        $table:ident, $slice:path, 
+        $table_name:ident, $slice:path, 
         $($block_name:ident),*
     ) => {
-        pub static $table : &'static [&'static (dyn $slice)] = &[
+        pub static $table_name : &'static [&'static (dyn $slice)] = &[
             $(& $block_name),*
         ];
+    }
+}
+
+#[macro_export]
+macro_rules! enum_define {
+    ($enum_name:ident, $($block_name:ident),*) => {
+        pub enum $enum_name {
+            $($block_name),*
+        }
     }
 }

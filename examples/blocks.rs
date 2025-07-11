@@ -9,7 +9,7 @@ use opentale_blocks::{
     }, table, with_full_paths, with_pillar_paths
 };
 
-table!(BlockType, static BLOCKS = {
+table!(BlockType, enum BlockId, static BLOCKS = {
     let Dirt: Basic = Block::new_basic("dirt_block")
         .with_texture("dirt.gif");
     let Log: Pillar = Block::new_pillar("log")
