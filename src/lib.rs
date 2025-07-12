@@ -184,5 +184,93 @@ macro_rules! enum_define {
             Air(()),
             $($block_name(<$block_type as $crate::HasBuildVariants>::Variants)),*
         }
+
+        impl $crate::AsId for $enum_name {
+            type Name = &'static str;
+            const NAME: Self::Name = stringify!($enum_name);
+
+            fn from_id(id: usize) -> Self {
+                $crate::from_id_inner!($enum_name, id, $($block_name : $block_type),*);
+            }
+
+            fn to_id(&self) -> usize {
+                $crate::to_id_inner!($enum_name, self, $($block_name : $block_type),*);
+            }
+
+            fn get_id_span() -> usize {
+                1 + $crate::get_id_span_inner!($($block_type),*)
+            }
+
+            fn to_string(&self) -> String {
+                match self {
+                    $enum_name::Air(()) => "Air".to_string(),
+                    $(
+                        $enum_name::$block_name(inner) => if <<$block_type as $crate::HasBuildVariants>::Variants as $crate::AsId>::get_id_span() == 1 {
+                            stringify!($block_name).to_string()
+                        } else {
+                            stringify!($block_name).to_string() + "[" + inner.to_string().as_str() + "]"
+                        },
+                    )*
+                }
+            }
+        }
     }
+}
+
+#[macro_export]
+macro_rules! from_id_inner {
+    ($enum_name:ident, $id:expr, $($block_name:ident : $block_type:ty),*) => {
+        if $id == 0 {
+            return $enum_name::Air(());
+        }
+        
+        let mut offset = 1;
+
+        $(
+            let size = <<$block_type as $crate::HasBuildVariants>::Variants as $crate::AsId>::get_id_span();
+            if $id >= offset && $id < offset + size {
+                let variant_id = $id - offset;
+                return $enum_name::$block_name(
+                    <_>::from_id(variant_id)
+                );
+            }
+            offset += size;
+        )*
+
+        panic!("{} is an invalid Id for {}", $id, stringify!($enum_name));
+    }
+}
+
+#[macro_export]
+macro_rules! to_id_inner {
+    ($enum_name:ident, $self:ident, $($block_name:ident : $block_type:ty),*) => {
+        let mut offset = 0;
+        if let $enum_name::Air(()) = $self {
+            return offset;
+        }
+        offset += 1;
+        $(
+            if let $enum_name::$block_name(inner) = $self {
+                return offset + inner.to_id();
+            }
+            offset += <<$block_type as $crate::HasBuildVariants>::Variants as $crate::AsId>::get_id_span();
+        )*
+        unreachable!();
+    };
+}
+
+#[macro_export]
+macro_rules! get_id_span_inner {
+    ($first_type:ty, $($rest_type:ty),+) => {
+        <<$first_type as $crate::HasBuildVariants>::Variants as $crate::AsId>::get_id_span() 
+            + $crate::get_id_span_inner!($($rest_type),*)
+    };
+    ($block_type:ty) => {
+        <<$block_type as $crate::HasBuildVariants>::Variants as $crate::AsId>::get_id_span() 
+    };
+    () => {
+        0
+    };
+}
+
 }
