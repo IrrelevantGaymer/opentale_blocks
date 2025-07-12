@@ -4,9 +4,9 @@ use opentale_blocks::{
     blocks::{
         block::Block, 
         block_types::{
-            basic::Basic, custom::Custom, full::{self, Full}, pillar::{self, Pillar}, reflectable::Reflectable, rotateable::{RotDir, Rotateable}, BlockType
+            basic::Basic, custom::Custom, full::{self, Full}, full_custom::{self, FullCustom}, pillar::{self, Pillar}, reflectable::Reflectable, rotateable::{RotDir, Rotateable}, BlockType
         }
-    }, table, with_full_paths, with_pillar_paths
+    }, table, with_full_paths, with_pillar_paths, AsId
 };
 
 table!(BlockType, enum BlockId, static BLOCKS = {
@@ -51,6 +51,31 @@ table!(BlockType, enum BlockId, static BLOCKS = {
                 sides: "slab_side.bbno$",
                 down: "slab_bottom.bbno$",
             })
+    );
+    let StoneStair : 
+        Reflectable<Rotateable<FullCustom, {RotDir::Y}>> 
+    = Block::new_reflectable(
+        Block::new_rotateable(
+            Block::new_full_custom("stone_stair")
+                .with_textures(full_custom::Paths { 
+                    up: "stone_stair_up.gif", 
+                    north: "stone_stair_north.gif", 
+                    west: "stone_stair_west.gif", 
+                    east: "stone_stair_east.gif", 
+                    south: "stone_stair_south.gif", 
+                    down: "stone_stair_down.gif", 
+                    custom: "stone_stair_inner.gif",
+                })
+                .with_models(full_custom::Paths {
+                    up: "stair_up.bbno$", 
+                    north: "stair_north.bbno$", 
+                    west: "stair_west.bbno$", 
+                    east: "stair_east.bbno$", 
+                    south: "stair_south.bbno$", 
+                    down: "stair_down.bbno$", 
+                    custom: "stair_inner.bbno$", 
+                })
+        )
     );
     let StonePile: Custom = Block::new_custom("stone_pile")
         .with_texture("stone_pile.gif")
