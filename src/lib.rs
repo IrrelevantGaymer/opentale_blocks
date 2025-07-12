@@ -185,6 +185,31 @@ macro_rules! enum_define {
             $($block_name(<$block_type as $crate::HasBuildVariants>::Variants)),*
         }
 
+        impl $enum_name {
+            pub fn inner_id(&self) -> usize {
+                match self {
+                    $enum_name::Air(()) => 0,
+                    $(
+                        $enum_name::$block_name(inner) => inner.to_id()
+                    ),*
+                }
+            }
+
+            pub fn index(&self) -> usize {
+                if let $enum_name::Air(_) = self {
+                    return 0;
+                }
+                let mut index = 1;
+                $(
+                    if let $enum_name::$block_name(_) = self {
+                        return index;
+                    }
+                    index += 1;
+                )*
+                unreachable!();
+            }
+        }
+
         impl $crate::AsId for $enum_name {
             type Name = &'static str;
             const NAME: Self::Name = stringify!($enum_name);
@@ -212,6 +237,17 @@ macro_rules! enum_define {
                         },
                     )*
                 }
+            }
+        }
+
+        impl std::ops::Index<$enum_name> for $crate::table::Table<dyn ($slice)> {
+            type Output = dyn $slice;
+        
+            fn index(&self, index: $enum_name) -> &Self::Output {
+                let idx = index.index() - 1;
+                // use index.inner_id() to grab modified versions of blocks
+                // such as rotated or reflected blocks
+                self.0[idx]
             }
         }
     }
@@ -273,4 +309,25 @@ macro_rules! get_id_span_inner {
     };
 }
 
+#[macro_export]
+macro_rules! id {
+    ($id:path {$($field:ident : $v:expr),*}) => {
+        $id ($crate::id_inner!($($v),*))
+    };
+    ($id:path) => {
+        $id(())
+    };
+}
+
+#[macro_export]
+macro_rules! id_inner {
+    () => {
+        ()
+    };
+    ($v:expr $(,)?) => {
+        ($v, ())
+    };
+    ($v:expr, $($vs:expr),+) => {
+        ($v, $crate::id_inner!($($vs),*))
+    };
 }
