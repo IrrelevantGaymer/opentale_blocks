@@ -155,7 +155,7 @@ macro_rules! items_define {
                 $id
             );
         $crate::items_define!(
-            $id + <$first_type as $crate::Buildable>::get_id_size(),
+            $id + <$first_type as $crate::Buildable>::get_id_span(),
             $idx + <$first_type as $crate::Buildable>::get_texture_size(),
             $($rest_name : $rest_type = $rest_expr),*
         );
