@@ -162,8 +162,8 @@ where
     fn get_texture_size() -> usize {
         B::get_texture_size()
     }
-    fn get_id_size() -> usize {
-        match ROT {
+    fn get_id_span() -> usize {
+        B::get_id_span() * match ROT {
             RotDir::Y => 4,
             RotDir::Axis => 3,
             RotDir::All => 6,

@@ -11,7 +11,7 @@ pub trait Buildable: HasBuildVariants {
     /// such as stairs, slabs, waterloggable blocks, rotateable blocks,
     /// connecting blocks, etc.  Most blocks don't have blockstates,
     /// so the default is 1.
-    fn get_id_size() -> usize { 1usize }
+    fn get_id_span() -> usize { 1usize }
     fn with_index(self, idx: usize) -> Self;
     fn set_index(&mut self, idx: usize);
     fn with_id(self, id: usize) -> Self;

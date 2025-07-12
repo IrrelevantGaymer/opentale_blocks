@@ -56,7 +56,7 @@ where
     fn get_texture_size() -> usize {
         B::get_texture_size()
     }
-    fn get_id_size() -> usize { 2 }
+    fn get_id_span() -> usize { 2 * B::get_id_span() }
     fn with_index(mut self, idx: usize) -> Self {
         self.block_data.set_index(idx);
         self
