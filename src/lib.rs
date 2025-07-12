@@ -114,8 +114,8 @@ macro_rules! table {
         );
 
         $crate::enum_define!(
-            $enum,
-            $($block_name),*
+            $enum, $slice,
+            $($block_name : $block_type),*
         );
     };
 }
@@ -179,9 +179,10 @@ macro_rules! table_define {
 
 #[macro_export]
 macro_rules! enum_define {
-    ($enum_name:ident, $($block_name:ident),*) => {
+    ($enum_name:ident, $slice:path, $($block_name:ident : $block_type:ty),*) => {
         pub enum $enum_name {
-            $($block_name),*
+            Air(()),
+            $($block_name(<$block_type as $crate::HasBuildVariants>::Variants)),*
         }
     }
 }
