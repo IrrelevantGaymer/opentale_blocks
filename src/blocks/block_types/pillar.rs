@@ -110,18 +110,9 @@ pub enum PillarTexture {
 /// ### Example
 ///
 /// ```rust
-/// # #![feature(const_trait_impl)]
-/// # 
-/// # use opentale_blocks::{blocks::{block::Block, block_types::pillar::{self, Pillar}}, Indexable};
-/// #
-/// # #[derive(Clone, Copy)]
-/// # pub struct TextureIndex;
-/// # impl const Indexable for TextureIndex {
-/// #     fn value(&self) -> usize { 0 }
-/// #     fn default() -> Self { TextureIndex }
-/// # }
-///
-/// const BLOCK: Pillar<TextureIndex> = Block::new_pillar("block")
+/// # use opentale_blocks::blocks::{block::Block, block_types::pillar::{self, Pillar}};
+/// 
+/// const BLOCK: Pillar = Block::new_pillar("block")
 ///     .with_textures(pillar::Paths {
 ///         up: "top.gif",
 ///         sides: "north.gif",
@@ -172,18 +163,9 @@ pub struct PathsInternal {
 /// ### Example
 ///
 /// ```rust
-/// # #![feature(const_trait_impl)]
-/// # 
-/// # use opentale_blocks::{with_pillar_paths, blocks::{block::Block, block_types::pillar::{self, Pillar}}, Indexable};
-/// #
-/// # #[derive(Clone, Copy)]
-/// # pub struct TextureIndex;
-/// # impl const Indexable for TextureIndex {
-/// #     fn value(&self) -> usize { 0 }
-/// #     fn default() -> Self { TextureIndex }
-/// # }
-///
-/// const BLOCK: Pillar<TextureIndex> = Block::new_pillar("block")
+/// # use opentale_blocks::{with_pillar_paths, blocks::{block::Block, block_types::pillar::{self, Pillar}}};
+/// 
+/// const BLOCK: Pillar = Block::new_pillar("block")
 ///     .with_textures(with_pillar_paths! {
 ///         up: "top.gif",
 ///         down: "bottom.gif",

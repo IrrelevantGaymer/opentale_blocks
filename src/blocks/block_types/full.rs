@@ -111,25 +111,16 @@ pub enum FullTexture {
 /// ### Example
 ///
 /// ```rust
-/// # #![feature(const_trait_impl)]
-/// # 
-/// # use opentale_blocks::{blocks::{block::Block, block_types::full::{self, Full}}, Indexable};
-/// #
-/// # #[derive(Clone, Copy)]
-/// # pub struct TextureIndex;
-/// # impl const Indexable for TextureIndex {
-/// #     fn value(&self) -> usize { 0 }
-/// #     fn default() -> Self { TextureIndex }
-/// # }
-///
-/// const BLOCK: Full<TextureIndex> = Block::new_full("block")
+/// # use opentale_blocks::blocks::{block::Block, block_types::full::{self, Full}};
+/// 
+/// const BLOCK: Full = Block::new_full("block")
 ///     .with_textures(full::Paths {
-///         up: "top.png",
-///         north: "north.png",
-///         south: "south.png",
-///         east: "east.png",
-///         west: "west.png",
-///         down: "bottom.png",
+///         up: "top.gif",
+///         north: "north.gif",
+///         south: "south.gif",
+///         east: "east.gif",
+///         west: "west.gif",
+///         down: "bottom.gif",
 ///     }
 /// );
 /// ```
@@ -184,23 +175,14 @@ pub struct PathsInternal {
 /// ### Example
 ///
 /// ```rust
-/// # #![feature(const_trait_impl)]
-/// # 
-/// # use opentale_blocks::{with_full_paths, blocks::{block::Block, block_types::full::{self, Full}}, Indexable};
-/// #
-/// # #[derive(Clone, Copy)]
-/// # pub struct TextureIndex;
-/// # impl const Indexable for TextureIndex {
-/// #     fn value(&self) -> usize { 0 }
-/// #     fn default() -> Self { TextureIndex }
-/// # }
-///
-/// const BLOCK: Full<TextureIndex> = Block::new_full("block")
+/// # use opentale_blocks::{with_full_paths, blocks::{block::Block, block_types::full::{self, Full}}};
+/// 
+/// const BLOCK: Full = Block::new_full("block")
 ///     .with_textures(with_full_paths! {
-///         up: "top.png",
-///         north: "north.png",
-///         south: "south.png",
-///         down: "bottom.png",
+///         up: "top.gif",
+///         north: "north.gif",
+///         south: "south.gif",
+///         down: "bottom.gif",
 ///     }
 /// );
 /// ```
