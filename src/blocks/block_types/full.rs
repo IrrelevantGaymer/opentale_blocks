@@ -1,4 +1,4 @@
-use crate::{blocks::{block_types::BlockType, const_into::ConstInto}, Buildable};
+use crate::{blocks::{block_types::BlockType, const_into::ConstInto}, Buildable, HasBuildVariants};
 
 /// A Block where each face has a unique texture and model
 pub struct Full {
@@ -70,6 +70,10 @@ impl const Buildable for Full {
     fn set_id(&mut self, id: usize) {
         self.id = id;
     }
+}
+
+impl HasBuildVariants for Full {
+    type Variants = ();
 }
 
 impl BlockType for Full {

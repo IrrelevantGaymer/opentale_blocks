@@ -1,4 +1,4 @@
-use crate::{blocks::block_types::BlockType, Buildable};
+use crate::{blocks::block_types::BlockType, Buildable, HasBuildVariants};
 
 /// A Block that has a custom model and is not culled by 
 /// nor culls other faces.
@@ -53,6 +53,10 @@ impl const Buildable for Custom {
     fn set_id(&mut self, id: usize) {
         self.id = id;
     }
+}
+
+impl HasBuildVariants for Custom {
+    type Variants = ();
 }
 
 impl BlockType for Custom {

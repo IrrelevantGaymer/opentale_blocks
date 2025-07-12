@@ -1,4 +1,4 @@
-use crate::{blocks::block_types::BlockType, Buildable};
+use crate::{blocks::block_types::BlockType, Buildable, HasBuildVariants};
 
 /// A Block where all faces use the same texture and model
 pub struct Basic {
@@ -52,6 +52,10 @@ impl const Buildable for Basic {
     fn set_id(&mut self, id: usize) {
         self.id = id;
     }
+}
+
+impl HasBuildVariants for Basic {
+    type Variants = ();
 }
 
 impl BlockType for Basic {

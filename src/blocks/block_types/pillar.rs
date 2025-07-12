@@ -1,4 +1,4 @@
-use crate::{blocks::{block_types::BlockType, const_into::ConstInto}, Buildable};
+use crate::{blocks::{block_types::BlockType, const_into::ConstInto}, Buildable, HasBuildVariants};
 
 /// A Block where the top, bottom, and side faces 
 /// have different textures and models, meaning that each side face 
@@ -69,6 +69,10 @@ impl const Buildable for Pillar {
     fn set_id(&mut self, id: usize) {
         self.id = id;
     }
+}
+
+impl HasBuildVariants for Pillar {
+    type Variants = ();
 }
 
 impl BlockType for Pillar {
