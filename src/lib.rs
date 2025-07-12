@@ -2,6 +2,7 @@
 #![feature(const_trait_impl)]
 
 pub mod blocks;
+pub mod table;
 
 #[const_trait]
 pub trait Buildable: HasBuildVariants {
@@ -170,9 +171,9 @@ macro_rules! table_define {
         $table_name:ident, $slice:path, 
         $($block_name:ident),*
     ) => {
-        pub static $table_name : &'static [&'static (dyn $slice)] = &[
+        pub static $table_name : $crate::table::Table<dyn $slice> = $crate::table::Table(&[
             $(& $block_name),*
-        ];
+        ]);
     }
 }
 

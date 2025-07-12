@@ -61,7 +61,7 @@ table!(BlockType, enum BlockId, static BLOCKS = {
 });
 
 pub fn main() {
-    for block in BLOCKS {
+    for block in &BLOCKS {
         println!("{} has id {} and index {}", block.name(), block.id(), block.index());
         // Here we could generate a table of textures, materials, models, etc.
         //
