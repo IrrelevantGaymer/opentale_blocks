@@ -86,11 +86,27 @@ table!(BlockType, enum BlockId, static BLOCKS = {
 });
 
 pub fn main() {
+    let mut ids = vec![];
     for block in &BLOCKS {
         println!("{} has id {} and index {}", block.name(), block.id(), block.index());
+        ids.push(block.id());
         // Here we could generate a table of textures, materials, models, etc.
         //
         // We could also decompose BLOCKS, splitting blocks with multiple block states
         // into different distinct Blocks, and create a vector that we can index into
+    }
+
+    println!("");
+
+    for id in 0..BlockId::get_id_span() {
+        println!("block id {id} maps to {}", BlockId::from_id(id).to_string());
+    }
+
+    println!("");
+
+    for id in ids {
+        let block_id = BlockId::from_id(id);
+        let block = &BLOCKS[block_id];
+        println!("id {id} maps to block {}", block.name());
     }
 }
